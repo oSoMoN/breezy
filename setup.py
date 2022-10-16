@@ -92,9 +92,6 @@ class build_man(Command):
 from setuptools.command.build import build
 build.sub_commands.append(('build_mo', lambda _: True))
 
-from setuptools.command.build import build
-build.sub_commands.append(('build_mo', lambda _: True))
-
 command_classes = {
     'build_man': build_man,
     'build_scripts': brz_build_scripts,
