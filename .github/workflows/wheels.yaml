@@ -20,6 +20,13 @@ jobs:
       - name: Install native dependencies (Ubuntu)
         run: sudo apt-get update && sudo apt-get install -y libgpgme-dev
         if: "matrix.os == 'ubuntu-latest'"
+      - name: set up rust
+        if: matrix.os != 'ubuntu'
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
       - name: Install native dependencies (MacOS)
         run: brew install swig gpgme
         if: "matrix.os == 'macos-latest'"
@@ -38,7 +45,16 @@ jobs:
         env:
           CIBW_ARCHS_LINUX: x86_64 aarch64
           CIBW_ARCHS_MACOS: x86_64 arm64 universal2
-          CIBW_ARCHS_WINDOWS: AMD64 x86
+          CIBW_SKIP: '*-win32'
+          CIBW_ENVIRONMENT: 'PATH="$HOME/.cargo/bin:$PATH"'
+          CIBW_BEFORE_BUILD: >
+            pip install -U setuptools-rust &&
+            rustup default nightly &&
+            rustup show
+          CIBW_BEFORE_BUILD_LINUX: >
+            pip install -U setuptools-rust &&
+            curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain=nightly --profile=minimal -y &&
+            rustup show
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
