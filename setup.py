@@ -69,18 +69,10 @@ class brz_build_scripts(build_scripts):
                     os.path.join(self.build_dir, ext.name))
 
 
-class brz_install(install):
-    """Turns out easy_install was always just a bad idea."""
-
-    def finalize_options(self):
-        install.finalize_options(self)
-        # Get us off the do_egg_install() path
-        self.single_version_externally_managed = True
+from distutils.core import Command
 
 
 class build_man(Command):
-    """Generate brz.1.
-    """
 
     def initialize_options(self):
         pass
@@ -100,10 +92,12 @@ class build_man(Command):
 from setuptools.command.build import build
 build.sub_commands.append(('build_mo', lambda _: True))
 
+from setuptools.command.build import build
+build.sub_commands.append(('build_mo', lambda _: True))
+
 command_classes = {
     'build_man': build_man,
     'build_scripts': brz_build_scripts,
-    'install': brz_install,
 }
 
 from distutils import log
